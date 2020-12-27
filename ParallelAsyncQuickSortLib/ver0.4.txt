@@ -1,0 +1,105 @@
+//#include <type_traits>
+//#include <iterator>
+//#include <vector>
+//#include <stack>
+//#include <functional>
+//#include <thread>
+//#include <future>
+//
+//#include <iostream>
+//
+//class ParallelAsyncQuickSort final
+//{
+//	template <typename RandomAccessIterator, typename Compare = std::greater<>>
+//	static int partition(RandomAccessIterator& arr, const int start_indx, const int end_indx, Compare comp)
+//	{
+//		auto end_indx_elem = arr[end_indx];
+//		int i = (start_indx - 1);
+//
+//		for (int j = start_indx; j <= end_indx - 1; ++j)
+//		{
+//			if (!comp(arr[j], end_indx_elem))
+//			{
+//				++i;
+//				std::swap(arr[i], arr[j]);
+//			}
+//		}
+//		std::swap(arr[i + 1], arr[end_indx]);
+//		return (i + 1);
+//	}
+//	ParallelAsyncQuickSort() = delete;
+//	template <typename RandomAccessIterator, typename Compare>
+//	static void Qsort(RandomAccessIterator begin, size_t elements, Compare comp = Compare())
+//	{
+//		std::stack<int> stack;
+//		int start_indx = 0;
+//		int end_indx = elements - 1;
+//		if (start_indx > end_indx)
+//		{
+//			return;
+//		}
+//		stack.push(start_indx);
+//		stack.push(end_indx);
+//		while (!stack.empty())
+//		{
+//			end_indx = stack.top();
+//			stack.pop();
+//			start_indx = stack.top();
+//			stack.pop();
+//			int pivot = partition(begin, start_indx, end_indx, comp);
+//			if (pivot - 1 > start_indx)
+//			{
+//				stack.push(start_indx);
+//				stack.push(pivot - 1);
+//			}
+//			if (pivot + 1 < end_indx)
+//			{
+//				stack.push(pivot + 1);
+//				stack.push(end_indx);
+//			}
+//		}
+//	}
+//	template <typename RandomAccessIterator, typename Compare>
+//	static void thread_sort(RandomAccessIterator begin, RandomAccessIterator end, int number_of_threads, Compare comp = Compare()) {
+//		if (number_of_threads / 2 > 0 && std::distance(begin, end) > 1) {
+//			std::vector<std::future<void>> async_container;
+//			std::vector<std::future<void>> deferred_container;
+//			auto mid = begin + std::distance(begin, end) / 2;
+//			int thr_remainder = number_of_threads % 2;
+//			async_container.push_back(std::async(std::launch::async,
+//				[begin, number_of_threads, thr_remainder, mid, comp]() { thread_sort(begin, mid, number_of_threads / 2 + thr_remainder, comp); }));
+//			deferred_container.push_back(std::async(std::launch::deferred,
+//				[end, number_of_threads, mid, comp]() { thread_sort(mid, end, number_of_threads, comp); }));
+//			for (auto& thr : async_container) {
+//				thr.wait();
+//			}
+//			for (auto& thr : deferred_container) {
+//				thr.wait();
+//			}
+//			//Qsort(begin, std::distance(begin, end), comp);
+//		}
+//		else {
+//			Qsort(begin, std::distance(begin, end), comp);
+//		}
+//	}
+//public:
+//	template <class iter>
+//	using it_tag = typename std::iterator_traits<iter>::iterator_category;
+//
+//	template <typename RandomAccessIterator, typename Compare = std::greater<>,
+//		std::enable_if_t<std::is_base_of_v<std::random_access_iterator_tag, it_tag<RandomAccessIterator>>, int> = 0>
+//		static void sort(RandomAccessIterator first, RandomAccessIterator last, Compare comp = Compare())
+//	{
+//		__int64 input_size = std::distance(first, last);
+//		if (input_size >= 1000000) {
+//			size_t number_of_threads = std::thread::hardware_concurrency();
+//			if (number_of_threads == 0) number_of_threads = 2;
+//			thread_sort(first, last, number_of_threads, comp);
+//			//Qsort(first, input_size, comp);
+//		}
+//		else
+//		{
+//			Qsort(first, input_size, comp);
+//		}
+//	}
+//};
